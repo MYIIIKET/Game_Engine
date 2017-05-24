@@ -2,6 +2,9 @@ import Engine.Engine;
 import Engine.GameLogic;
 import Game.SimpleGame;
 
+import java.util.Properties;
+import java.util.Set;
+
 public class GameTest {
     public static void main(String[] args) {
         try {
