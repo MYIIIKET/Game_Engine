@@ -73,15 +73,15 @@ public class Renderer {
 
         shaderUtil.bind();
 
-        // Bind to the VAO
-        glBindVertexArray(vaoId);
+        // Draw the mesh
+        glBindVertexArray(mesh.getVaoId());
         glEnableVertexAttribArray(0);
-
-        // Draw the vertices
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glEnableVertexAttribArray(1);
+        glDrawElements(GL_TRIANGLES, mesh.getVertexCount(), GL_UNSIGNED_INT, 0);
 
         // Restore state
         glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
         glBindVertexArray(0);
 
         shaderUtil.unbind();

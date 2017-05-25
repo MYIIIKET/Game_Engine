@@ -1,6 +1,7 @@
 package Game;
 
 
+import Engine.Util.Mesh;
 import Engine.Window;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -13,6 +14,8 @@ public class SimpleGame implements GameLogic {
 
     private final Renderer renderer;
 
+    private Mesh mesh;
+
     public SimpleGame() {
         renderer = new Renderer();
     }
@@ -20,6 +23,22 @@ public class SimpleGame implements GameLogic {
     @Override
     public void init() throws Exception {
         renderer.init();
+        float[] positions = new float[]{
+                -0.5f, 0.5f, 0.0f,
+                -0.5f, -0.5f, 0.0f,
+                0.5f, -0.5f, 0.0f,
+                0.5f, 0.5f, 0.0f,
+        };
+        float[] colours = new float[]{
+                0.5f, 0.0f, 0.0f,
+                0.0f, 0.5f, 0.0f,
+                0.0f, 0.0f, 0.5f,
+                0.0f, 0.5f, 0.5f,
+        };
+        int[] indices = new int[]{
+                0, 1, 3, 3, 1, 2,
+        };
+        mesh = new Mesh(positions, colours, indices);
     }
 
     @Override
@@ -46,11 +65,12 @@ public class SimpleGame implements GameLogic {
     @Override
     public void render(Window window) {
         window.setClearColor(color, color, color, 0.0f);
-        renderer.render(window);
+        renderer.render(window, mesh);
     }
 
     @Override
     public void cleanup() {
         renderer.cleanup();
+        mesh.cleanUp();
     }
 }
