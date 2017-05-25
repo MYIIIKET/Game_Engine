@@ -1,5 +1,5 @@
 import Engine.Engine;
-import Engine.GameLogic;
+import Game.GameLogic;
 import Game.SimpleGame;
 
 

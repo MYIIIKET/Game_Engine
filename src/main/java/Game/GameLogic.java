@@ -1,5 +1,7 @@
-package Engine;
+package Game;
 
+
+import Engine.Window;
 
 public interface GameLogic {
     void init() throws Exception;

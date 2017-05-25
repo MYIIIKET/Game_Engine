@@ -1,5 +1,7 @@
 package Engine;
 
+import Game.GameLogic;
+
 public class Engine implements Runnable {
 
     public static final int TARGET_FPS = 75;

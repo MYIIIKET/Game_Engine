@@ -1,11 +1,9 @@
 package Game;
 
 
-import Engine.GameLogic;
 import Engine.Window;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.glViewport;
 
 public class SimpleGame implements GameLogic {
 
