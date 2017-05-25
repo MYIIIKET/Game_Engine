@@ -11,7 +11,7 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 
-public class MeshUtil {
+public class Mesh {
     private final int vaoId;
 
     private final int posVboId;
@@ -20,7 +20,7 @@ public class MeshUtil {
 
     private final int vertexCount;
 
-    public MeshUtil(float[] positions, int[] indices) {
+    public Mesh(float[] positions, int[] indices) {
         FloatBuffer posBuffer = null;
         IntBuffer indicesBuffer = null;
 

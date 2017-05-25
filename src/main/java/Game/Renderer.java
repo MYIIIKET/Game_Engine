@@ -1,5 +1,6 @@
 package Game;
 
+import Engine.Util.Mesh;
 import Engine.Util.ShaderUtil;
 import Engine.Util.FileUtil;
 import Engine.Window;
@@ -62,7 +63,7 @@ public class Renderer {
         }
     }
 
-    public void render(Window window) {
+    public void render(Window window, Mesh mesh) {
         clear();
 
         if (window.isResized()) {
@@ -90,16 +91,6 @@ public class Renderer {
         if (shaderUtil != null) {
             shaderUtil.cleanup();
         }
-
-        glDisableVertexAttribArray(0);
-
-        // Delete the VBO
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glDeleteBuffers(vboId);
-
-        // Delete the VAO
-        glBindVertexArray(0);
-        glDeleteVertexArrays(vaoId);
     }
 
 
