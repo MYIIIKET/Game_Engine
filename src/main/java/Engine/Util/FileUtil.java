@@ -1,13 +1,10 @@
-package Engine;
+package Engine.Util;
 
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
-import java.io.InputStream;
-import java.util.Scanner;
 
-public class Util {
+public class FileUtil {
     public static String loadResource(String fileName) throws Exception {
         StringBuilder result = new StringBuilder();
         BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName));

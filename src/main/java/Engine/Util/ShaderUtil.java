@@ -1,8 +1,8 @@
-package Engine.Graphics;
+package Engine.Util;
 
 import static org.lwjgl.opengl.GL20.*;
 
-public class ShaderProgram {
+public class ShaderUtil {
 
     private final int programId;
 
@@ -10,7 +10,7 @@ public class ShaderProgram {
 
     private int fragmentShaderId;
 
-    public ShaderProgram() throws Exception {
+    public ShaderUtil() throws Exception {
         programId = glCreateProgram();
         if (programId == 0) {
             throw new Exception("Could not create Shader");

@@ -1,7 +1,7 @@
 package Game;
 
-import Engine.Graphics.ShaderProgram;
-import Engine.Util;
+import Engine.Util.ShaderUtil;
+import Engine.Util.FileUtil;
 import Engine.Window;
 import org.lwjgl.system.MemoryUtil;
 
@@ -12,23 +12,21 @@ import static org.lwjgl.opengl.GL30.*;
 
 import java.nio.FloatBuffer;
 
-import static org.lwjgl.opengl.GL11.*;
-
 public class Renderer {
     private int vboId;
 
     private int vaoId;
 
-    private ShaderProgram shaderProgram;
+    private ShaderUtil shaderUtil;
 
     public Renderer() {
     }
 
     public void init() throws Exception {
-        shaderProgram = new ShaderProgram();
-        shaderProgram.createVertexShader(Util.loadResource("src/main/java/Shaders/Shader.vert"));
-        shaderProgram.createFragmentShader(Util.loadResource("src/main/java/Shaders/Shader.frag"));
-        shaderProgram.link();
+        shaderUtil = new ShaderUtil();
+        shaderUtil.createVertexShader(FileUtil.loadResource("src/main/java/Shaders/Shader.vert"));
+        shaderUtil.createFragmentShader(FileUtil.loadResource("src/main/java/Shaders/Shader.frag"));
+        shaderUtil.link();
 
         float[] vertices = new float[]{
                 0.0f, 0.5f, 0.0f,
@@ -72,7 +70,7 @@ public class Renderer {
             window.setResized(false);
         }
 
-        shaderProgram.bind();
+        shaderUtil.bind();
 
         // Bind to the VAO
         glBindVertexArray(vaoId);
@@ -85,12 +83,12 @@ public class Renderer {
         glDisableVertexAttribArray(0);
         glBindVertexArray(0);
 
-        shaderProgram.unbind();
+        shaderUtil.unbind();
     }
 
     public void cleanup() {
-        if (shaderProgram != null) {
-            shaderProgram.cleanup();
+        if (shaderUtil != null) {
+            shaderUtil.cleanup();
         }
 
         glDisableVertexAttribArray(0);
