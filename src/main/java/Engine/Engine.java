@@ -85,6 +85,10 @@ public class Engine implements Runnable {
         window.update();
     }
 
+    protected void cleanup() {
+        gameLogic.cleanup();
+    }
+
     @Override
     public void run() {
         try {
@@ -92,6 +96,8 @@ public class Engine implements Runnable {
             gameLoop();
         } catch (Exception e) {
             e.printStackTrace();
+        }finally {
+            cleanup();
         }
     }
 }
