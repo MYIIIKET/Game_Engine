@@ -4,6 +4,7 @@ import Engine.Util.Mesh;
 import Engine.Util.ShaderUtil;
 import Engine.Util.FileUtil;
 import Engine.Window;
+import org.joml.Matrix4f;
 import org.lwjgl.system.MemoryUtil;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -14,6 +15,15 @@ import static org.lwjgl.opengl.GL30.*;
 import java.nio.FloatBuffer;
 
 public class Renderer {
+
+    private static final float FOV = (float) Math.toRadians(60.0f);
+
+    private static final float Z_NEAR = 0.01f;
+
+    private static final float Z_FAR = 1000.f;
+
+    private Matrix4f projectionMatrix;
+
     private int vboId;
 
     private int vaoId;
@@ -23,44 +33,17 @@ public class Renderer {
     public Renderer() {
     }
 
-    public void init() throws Exception {
+    public void init(Window window) throws Exception {
+        // Create shader
         shaderUtil = new ShaderUtil();
         shaderUtil.createVertexShader(FileUtil.loadResource("src/main/java/Shaders/Shader.vert"));
         shaderUtil.createFragmentShader(FileUtil.loadResource("src/main/java/Shaders/Shader.frag"));
         shaderUtil.link();
 
-        float[] vertices = new float[]{
-                0.0f, 0.5f, 0.0f,
-                -0.5f, -0.5f, 0.0f,
-                0.5f, -0.5f, 0.0f
-        };
-
-        FloatBuffer verticesBuffer = null;
-        try {
-            verticesBuffer = MemoryUtil.memAllocFloat(vertices.length);
-            verticesBuffer.put(vertices).flip();
-
-            // Create the VAO and bind to it
-            vaoId = glGenVertexArrays();
-            glBindVertexArray(vaoId);
-
-            // Create the VBO and bint to it
-            vboId = glGenBuffers();
-            glBindBuffer(GL_ARRAY_BUFFER, vboId);
-            glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
-            // Define structure of the data
-            glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
-
-            // Unbind the VBO
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-            // Unbind the VAO
-            glBindVertexArray(0);
-        } finally {
-            if (verticesBuffer != null) {
-                MemoryUtil.memFree(verticesBuffer);
-            }
-        }
+        // Create projection matrix
+        float aspectRatio = (float) window.getWidth() / window.getHeight();
+        projectionMatrix = new Matrix4f().perspective(FOV, aspectRatio, Z_NEAR, Z_FAR);
+        shaderUtil.createUniform("projectionMatrix");
     }
 
     public void render(Window window, Mesh mesh) {
@@ -72,6 +55,7 @@ public class Renderer {
         }
 
         shaderUtil.bind();
+        shaderUtil.setUniform("projectionMatrix", projectionMatrix);
 
         // Draw the mesh
         glBindVertexArray(mesh.getVaoId());
