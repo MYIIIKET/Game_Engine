@@ -33,14 +33,17 @@ public class Renderer {
     public void init(Window window) throws Exception {
         // Create shader
         shader = new Shader();
-        shader.createVertexShader(File.loadResource("src/main/java/Shaders/Shader.vert"));
-        shader.createFragmentShader(File.loadResource("src/main/java/Shaders/Shader.frag"));
+        shader.createVertexShader(File.loadResource("src/main/java/Resources/Shaders/Shader.vert"));
+        shader.createFragmentShader(File.loadResource("src/main/java/Resources/Shaders/Shader.frag"));
         shader.link();
 
         // Create uniforms for world and projection matrices
         shader.createUniform("projectionMatrix");
         shader.createUniform("modelViewMatrix");
         shader.createUniform("texture_sampler");
+        // Create uniform for default colour and the flag that controls it
+        shader.createUniform("colour");
+        shader.createUniform("useColour");
 
         window.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     }
@@ -68,7 +71,9 @@ public class Renderer {
             // Set world matrix for this item
             Matrix4f modelViewMatrix = transformation.getModelViewMatrix(gameItem, viewMatrix);
             shader.setUniform("modelViewMatrix", modelViewMatrix);
-            // Render the mes for this game item
+            // Render the mesh for this game item
+            shader.setUniform("colour", gameItem.getMesh().getColour());
+            shader.setUniform("useColour", gameItem.getMesh().isTextured() ? 0 : 1);
             gameItem.getMesh().render();
         }
 
