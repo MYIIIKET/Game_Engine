@@ -1,30 +1,35 @@
 package Game;
 
 
+import Engine.Graphics.Camera;
 import Engine.Graphics.Texture;
 import Engine.Item;
 import Engine.Graphics.Mesh;
+import Engine.MouseInput;
 import Engine.Window;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-public class SimpleGame implements GameLogic {
+public class Game implements GameLogic {
 
-    private int displxInc = 0;
+    private static final float MOUSE_SENSITIVITY = 0.2f;
 
-    private int displyInc = 0;
+    private static final float CAMERA_POS_STEP = 0.05f;
 
-    private int displzInc = 0;
-
-    private int scaleInc = 0;
+    private final Vector3f cameraInc;
 
     private final Renderer renderer;
 
+    private final Camera camera;
+
     private Item[] items;
 
-    public SimpleGame() {
+    public Game() {
         renderer = new Renderer();
+        camera = new Camera();
+        cameraInc = new Vector3f(0, 0, 0);
     }
 
     @Override
@@ -126,66 +131,56 @@ public class SimpleGame implements GameLogic {
                 4, 6, 7, 5, 4, 7,};
         Texture texture = new Texture("src/main/java/Textures/brick.png");
         Mesh mesh = new Mesh(positions, textCoords, indices, texture);
-        Item item = new Item(mesh);
-        item.setPosition(0, 0, -2);
-        items = new Item[]{item};
+        Item item1 = new Item(mesh);
+        item1.setScale(0.5f);
+        item1.setPosition(0, 0, -2);
+        Item item2 = new Item(mesh);
+        item2.setScale(0.5f);
+        item2.setPosition(0.5f, 0.5f, -2);
+        Item item3 = new Item(mesh);
+        item3.setScale(0.5f);
+        item3.setPosition(0, 0, -2.5f);
+        Item item4 = new Item(mesh);
+        item4.setScale(0.5f);
+        item4.setPosition(0.5f, 0, -2.5f);
+        items = new Item[]{item1, item2, item3, item4};
     }
 
     @Override
-    public void input(Window window) {
-        displyInc = 0;
-        displxInc = 0;
-        displzInc = 0;
-        scaleInc = 0;
-        if (window.isKeyPressed(GLFW_KEY_UP)) {
-            displyInc = 1;
-        } else if (window.isKeyPressed(GLFW_KEY_DOWN)) {
-            displyInc = -1;
-        } else if (window.isKeyPressed(GLFW_KEY_LEFT)) {
-            displxInc = -1;
-        } else if (window.isKeyPressed(GLFW_KEY_RIGHT)) {
-            displxInc = 1;
-        } else if (window.isKeyPressed(GLFW_KEY_A)) {
-            displzInc = -1;
-        } else if (window.isKeyPressed(GLFW_KEY_Q)) {
-            displzInc = 1;
-        } else if (window.isKeyPressed(GLFW_KEY_Z)) {
-            scaleInc = -1;
+    public void input(Window window, MouseInput mouseInput) {
+        cameraInc.set(0, 0, 0);
+        if (window.isKeyPressed(GLFW_KEY_W)) {
+            cameraInc.z = -1;
+        } else if (window.isKeyPressed(GLFW_KEY_S)) {
+            cameraInc.z = 1;
+        }
+        if (window.isKeyPressed(GLFW_KEY_A)) {
+            cameraInc.x = -1;
+        } else if (window.isKeyPressed(GLFW_KEY_D)) {
+            cameraInc.x = 1;
+        }
+        if (window.isKeyPressed(GLFW_KEY_Z)) {
+            cameraInc.y = -1;
         } else if (window.isKeyPressed(GLFW_KEY_X)) {
-            scaleInc = 1;
+            cameraInc.y = 1;
         }
     }
 
     @Override
-    public void update(float interval) {
-        for (Item gameItem : items) {
-            // Update position
-            Vector3f itemPos = gameItem.getPosition();
-            float posx = itemPos.x + displxInc * 0.01f;
-            float posy = itemPos.y + displyInc * 0.01f;
-            float posz = itemPos.z + displzInc * 0.01f;
-            gameItem.setPosition(posx, posy, posz);
+    public void update(float interval, MouseInput mouseInput) {
+        // Update camera position
+        camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
 
-            // Update scale
-            float scale = gameItem.getScale();
-            scale += scaleInc * 0.05f;
-            if (scale < 0) {
-                scale = 0;
-            }
-            gameItem.setScale(scale);
-
-            // Update rotation angle
-            float rotation = gameItem.getRotation().z + 1.5f;
-            if (rotation > 360) {
-                rotation = 0;
-            }
-            gameItem.setRotation(rotation, rotation, rotation);
+        // Update camera based on mouse
+        if (mouseInput.isRightButtonPressed()) {
+            Vector2f rotVec = mouseInput.getDisplVec();
+            camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
         }
     }
 
     @Override
     public void render(Window window) {
-        renderer.render(window, items);
+        renderer.render(window, camera, items);
     }
 
     @Override

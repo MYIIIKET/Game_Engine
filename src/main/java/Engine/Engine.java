@@ -16,9 +16,12 @@ public class Engine implements Runnable {
 
     private final GameLogic gameLogic;
 
+    private final MouseInput mouseInput;
+
     public Engine(String windowTitle, int width, int height, boolean vSync, GameLogic gameLogic) throws Exception {
         gameLoopThread = new Thread(this, "GAME_LOOP_THREAD");
         window = new Window(windowTitle, width, height, vSync);
+        mouseInput = new MouseInput();
         this.gameLogic = gameLogic;
         timer = new Timer();
     }
@@ -35,6 +38,7 @@ public class Engine implements Runnable {
     protected void init() throws Exception {
         window.init();
         timer.init();
+        mouseInput.init(window);
         gameLogic.init(window);
     }
 
@@ -75,11 +79,12 @@ public class Engine implements Runnable {
     }
 
     protected void input() {
-        gameLogic.input(window);
+        mouseInput.input(window);
+        gameLogic.input(window, mouseInput);
     }
 
     protected void update(float interval) {
-        gameLogic.update(interval);
+        gameLogic.update(interval, mouseInput);
     }
 
     protected void render() {

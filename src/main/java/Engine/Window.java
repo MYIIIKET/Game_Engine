@@ -29,7 +29,7 @@ public class Window {
         this.resized = false;
     }
 
-    public void init(){
+    public void init() {
         GLFWErrorCallback.createPrint(System.err).set();
 
         if (!glfwInit()) {
@@ -113,6 +113,10 @@ public class Window {
 
     public int getHeight() {
         return height;
+    }
+
+    public long getWindowHandle() {
+        return windowHandle;
     }
 
     public boolean isResized() {
