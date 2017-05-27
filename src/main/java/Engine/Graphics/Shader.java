@@ -1,4 +1,4 @@
-package Engine.Util;
+package Engine.Graphics;
 
 import org.joml.Matrix4f;
 import org.lwjgl.system.MemoryStack;
@@ -9,7 +9,7 @@ import java.util.Map;
 
 import static org.lwjgl.opengl.GL20.*;
 
-public class ShaderUtil {
+public class Shader {
 
     private final int programId;
 
@@ -19,7 +19,7 @@ public class ShaderUtil {
 
     private final Map<String, Integer> uniforms;
 
-    public ShaderUtil() throws Exception {
+    public Shader() throws Exception {
         programId = glCreateProgram();
         if (programId == 0) {
             throw new Exception("Could not create Shader");
@@ -42,6 +42,10 @@ public class ShaderUtil {
             value.get(fb);
             glUniformMatrix4fv(uniforms.get(uniformName), false, fb);
         }
+    }
+
+    public void setUniform(String uniformName, int value) {
+        glUniform1i(uniforms.get(uniformName), value);
     }
 
     public void createVertexShader(String shaderCode) throws Exception {

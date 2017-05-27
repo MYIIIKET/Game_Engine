@@ -1,12 +1,15 @@
-package Engine.Util;
+package Engine.Graphics;
 
 
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
@@ -14,43 +17,49 @@ import static org.lwjgl.opengl.GL30.*;
 public class Mesh {
     private final int vaoId;
 
-    private final int posVboId;
-
-    private final int colourVboId;
-
-    private final int idxVboId;
+    private final List<Integer> vboIdList;
 
     private final int vertexCount;
 
-    public Mesh(float[] positions, float[] colours, int[] indices) {
+    private final Texture texture;
+
+    public Mesh(float[] positions, float[] textCoords, int[] indices, Texture texture) {
         FloatBuffer posBuffer = null;
+        FloatBuffer textCoordsBuffer = null;
         IntBuffer indicesBuffer = null;
-        FloatBuffer colourBuffer = null;
 
         try {
+            this.texture = texture;
             vertexCount = indices.length;
+            vboIdList = new ArrayList();
 
             vaoId = glGenVertexArrays();
             glBindVertexArray(vaoId);
 
-            posVboId = glGenBuffers();
+            // Position VBO
+            int vboId = glGenBuffers();
+            vboIdList.add(vboId);
             posBuffer = MemoryUtil.memAllocFloat(positions.length);
             posBuffer.put(positions).flip();
-            glBindBuffer(GL_ARRAY_BUFFER, posVboId);
+            glBindBuffer(GL_ARRAY_BUFFER, vboId);
             glBufferData(GL_ARRAY_BUFFER, posBuffer, GL_STATIC_DRAW);
             glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
 
-            colourVboId = glGenBuffers();
-            colourBuffer = MemoryUtil.memAllocFloat(colours.length);
-            colourBuffer.put(colours).flip();
-            glBindBuffer(GL_ARRAY_BUFFER, colourVboId);
-            glBufferData(GL_ARRAY_BUFFER, colourBuffer, GL_STATIC_DRAW);
-            glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0);
+            // Texture coordinates VBO
+            vboId = glGenBuffers();
+            vboIdList.add(vboId);
+            textCoordsBuffer = MemoryUtil.memAllocFloat(textCoords.length);
+            textCoordsBuffer.put(textCoords).flip();
+            glBindBuffer(GL_ARRAY_BUFFER, vboId);
+            glBufferData(GL_ARRAY_BUFFER, textCoordsBuffer, GL_STATIC_DRAW);
+            glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
 
-            idxVboId = glGenBuffers();
+            // Index VBO
+            vboId = glGenBuffers();
+            vboIdList.add(vboId);
             indicesBuffer = MemoryUtil.memAllocInt(indices.length);
             indicesBuffer.put(indices).flip();
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxVboId);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW);
 
             glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -58,6 +67,9 @@ public class Mesh {
         } finally {
             if (posBuffer != null) {
                 MemoryUtil.memFree(posBuffer);
+            }
+            if (textCoordsBuffer != null) {
+                MemoryUtil.memFree(textCoordsBuffer);
             }
             if (indicesBuffer != null) {
                 MemoryUtil.memFree(indicesBuffer);
@@ -74,6 +86,12 @@ public class Mesh {
     }
 
     public void render() {
+        // Activate firs texture bank
+        glActiveTexture(GL_TEXTURE0);
+        // Bind the texture
+        glBindTexture(GL_TEXTURE_2D, texture.getId());
+
+
         // Draw the mesh
         glBindVertexArray(getVaoId());
         glEnableVertexAttribArray(0);
@@ -92,9 +110,12 @@ public class Mesh {
 
         // Delete the VBOs
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glDeleteBuffers(posVboId);
-        glDeleteBuffers(colourVboId);
-        glDeleteBuffers(idxVboId);
+        for (int vboId : vboIdList) {
+            glDeleteBuffers(vboId);
+        }
+
+        // Delete the texture
+        texture.cleanup();
 
         // Delete the VAO
         glBindVertexArray(0);

@@ -1,4 +1,4 @@
-package Engine.Util;
+package Engine.Graphics;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;

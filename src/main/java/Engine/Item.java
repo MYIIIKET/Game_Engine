@@ -1,6 +1,6 @@
 package Engine;
 
-import Engine.Util.Mesh;
+import Engine.Graphics.Mesh;
 import org.joml.Vector3f;
 
 public class Item {
