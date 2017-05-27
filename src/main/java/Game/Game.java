@@ -131,19 +131,18 @@ public class Game implements GameLogic {
                 4, 6, 7, 5, 4, 7,};
         Texture texture = new Texture("src/main/java/Textures/brick.png");
         Mesh mesh = new Mesh(positions, textCoords, indices, texture);
-        Item item1 = new Item(mesh);
-        item1.setScale(0.5f);
-        item1.setPosition(0, 0, -2);
-        Item item2 = new Item(mesh);
-        item2.setScale(0.5f);
-        item2.setPosition(0.5f, 0.5f, -2);
-        Item item3 = new Item(mesh);
-        item3.setScale(0.5f);
-        item3.setPosition(0, 0, -2.5f);
-        Item item4 = new Item(mesh);
-        item4.setScale(0.5f);
-        item4.setPosition(0.5f, 0, -2.5f);
-        items = new Item[]{item1, item2, item3, item4};
+
+        int itemNumber = 10;
+        items = new Item[itemNumber];
+        for (int i = 0; i < itemNumber; i++) {
+            items[i] = new Item(mesh);
+            items[i].setScale((float) Math.random() * 2);
+            items[i].setPosition(
+                    (float) Math.random() * 3,
+                    (float) Math.random() * 3,
+                    (float) Math.random() * 3);
+
+        }
     }
 
     @Override
