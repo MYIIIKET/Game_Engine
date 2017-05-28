@@ -1,11 +1,8 @@
 package Game;
 
 
-import Engine.Graphics.Camera;
-import Engine.Graphics.OBJLoader;
-import Engine.Graphics.Texture;
+import Engine.Graphics.*;
 import Engine.Item;
-import Engine.Graphics.Mesh;
 import Engine.MouseInput;
 import Engine.Window;
 import org.joml.Vector2f;
@@ -27,6 +24,11 @@ public class Game implements GameLogic {
 
     private Item[] items;
 
+    private Vector3f ambientLight;
+
+    private PointLight pointLight;
+
+
     public Game() {
         renderer = new Renderer();
         camera = new Camera();
@@ -36,25 +38,25 @@ public class Game implements GameLogic {
     @Override
     public void init(Window window) throws Exception {
         renderer.init(window);
-        Mesh mesh = OBJLoader.loadMesh("src/main/java/Resources/Models/bunny.obj");
-//        Texture texture = new Texture("src/main/java/Resources/Textures/brick.png");
-//        mesh.setTexture(texture);
+        float reflectance = 1f;
+        Mesh mesh = OBJLoader.loadMesh("src/main/java/Resources/Models/cube.obj");
+        Texture texture = new Texture("src/main/java/Resources/Textures/texture.png");
+        Material material = new Material(texture, reflectance);
+        mesh.setTexture(texture);
+        mesh.setMaterial(material);
         Item item = new Item(mesh);
         item.setScale(0.5f);
         item.setPosition(0, 0, -2);
         items = new Item[]{item};
 
-//        int itemNumber = 10;
-//        items = new Item[itemNumber];
-//        for (int i = 0; i < itemNumber; i++) {
-//            items[i] = new Item(mesh);
-//            items[i].setScale((float) Math.random() * 2);
-//            items[i].setPosition(
-//                    (float) Math.random() * 3,
-//                    (float) Math.random() * 3,
-//                    (float) Math.random() * 3);
-//
-//        }
+        ambientLight = new Vector3f(0.3f, 0.3f, 0.3f);
+        Vector3f lightColour = new Vector3f(1, 1, 1);
+        Vector3f lightPosition = new Vector3f(0, 0, 1);
+        float lightIntensity = 1.0f;
+        pointLight = new PointLight(lightColour, lightPosition, lightIntensity);
+        PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
+        pointLight.setAttenuation(att);
+
     }
 
     @Override
@@ -91,7 +93,7 @@ public class Game implements GameLogic {
 
     @Override
     public void render(Window window) {
-        renderer.render(window, camera, items);
+        renderer.render(window, camera, items, ambientLight, pointLight);
     }
 
     @Override

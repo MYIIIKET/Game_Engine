@@ -29,6 +29,8 @@ public class Mesh {
 
     private Vector3f colour;
 
+    private Material material;
+
     public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices) {
         FloatBuffer posBuffer = null;
         FloatBuffer textCoordsBuffer = null;
@@ -116,6 +118,13 @@ public class Mesh {
         return this.colour;
     }
 
+    public Material getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(Material material) {
+        this.material = material;
+    }
 
     public int getVaoId() {
         return vaoId;
